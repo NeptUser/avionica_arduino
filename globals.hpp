@@ -9,6 +9,27 @@
 // =============================================================
 #define LED_BUILTIN_PIN     13  // LED onboard do Arduino Nano
 
+#define MPU_INT_PIN          2  // MPU-6050: pino de interrupção
+
+#define FLASH_CS_PIN        10  // W25Q128: Chip Select (SPI)
+
+#define LORA_RX_PIN          5  // LoRa E32: RX do Arduino
+#define LORA_TX_PIN          6 // LoRa E32: TX do Arduino
+#define LORA_AUX_PIN         8  // LoRa E32: sinaliza módulo ocupado
+#define LORA_M0_PIN          4  // LoRa E32: seleção de modo
+#define LORA_M1_PIN          7  // LoRa E32: seleção de modo
+
+#define SERVO_OUT_PIN 3         // Servo-motor: Saída de sinal
+#define PYRO_OUTPUT 9           // Canal Pyro: Controle de mosfet
+
+// =============================================================
+// CONFIGURAÇÕES DE EJEÇÃO DO PARAQUEDAS
+// Definir qual tipo de atuação de ejeção será escolhida (Servo
+// ou Pyro).
+// A escolha do modo é realizada apenas por software
+// =============================================================
+//#define mode PYRO             // DEFINE MODO PYRO
+#define mode SERVO              // DEFINE MODO SERVO
 #define FLASH_CS_PIN        10  // W25Q128: Chip Select (SPI)
 
 // LoRa
@@ -62,6 +83,7 @@ struct DadosVoo {
     // MPU-6050: aceleração linear (m/s²) e angular (°/s)
     float acelX, acelY, acelZ;
     float giroX, giroY, giroZ;
+    unsigned long timestampMPU;  // ms desde o boot (millis())
 
     // BMP280: condições atmosféricas e altitude
     float pressao;      // hPa
