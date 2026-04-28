@@ -9,15 +9,11 @@
 // =============================================================
 #define LED_BUILTIN_PIN     13  // LED onboard do Arduino Nano
 
-#define MPU_INT_PIN          2  // MPU-6050: pino de interrupção
-
 #define FLASH_CS_PIN        10  // W25Q128: Chip Select (SPI)
 
-#define LORA_RX_PIN          4  // LoRa E32: RX do Arduino
-#define LORA_TX_PIN          3  // LoRa E32: TX do Arduino
-#define LORA_AUX_PIN         5  // LoRa E32: sinaliza módulo ocupado
-#define LORA_M0_PIN          6  // LoRa E32: seleção de modo
-#define LORA_M1_PIN          7  // LoRa E32: seleção de modo
+// LoRa
+#define LORA_RX_PIN          5  // LoRa E32: RX do Arduino
+#define LORA_TX_PIN          6  // LoRa E32: TX do Arduino
 
 // =============================================================
 // THRESHOLDS DA MÁQUINA DE ESTADOS
@@ -66,16 +62,14 @@ struct DadosVoo {
     // MPU-6050: aceleração linear (m/s²) e angular (°/s)
     float acelX, acelY, acelZ;
     float giroX, giroY, giroZ;
-    unsigned long timestampMPU;  // ms desde o boot (millis())
 
     // BMP280: condições atmosféricas e altitude
     float pressao;      // hPa
     float temperatura;  // °C
     float altitude;     // metros
-    unsigned long timestampBMP;  // ms desde o boot (millis())
 
     // Contexto da missão
-
+    unsigned long timestamp;  // ms desde o boot (millis())
     EstadoVoo estado;         // fase atual do voo
 };
 
@@ -88,8 +82,9 @@ struct DadosVoo {
 // =============================================================
 struct PacoteTelemetria {
     float acelX, acelY, acelZ;  // aceleração (m/s²)
+    float giroX, giroY, giroZ;
+
     float altitude;             // altitude (metros)
-    float pressao;              // pressão (hPa)
     unsigned long timestamp;    // ms desde o boot
     EstadoVoo estado;           // fase atual do voo
 };
