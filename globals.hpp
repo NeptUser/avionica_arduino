@@ -27,8 +27,9 @@
 // Definir qual tipo de atuação de ejeção será escolhida (Servo
 // ou Pyro).
 // A escolha do modo é realizada apenas por software
-#define mode pyro
 // =============================================================
+//#define mode PYRO             // DEFINE MODO PYRO
+#define mode SERVO              // DEFINE MODO SERVO
 
 // =============================================================
 // THRESHOLDS DA MÁQUINA DE ESTADOS

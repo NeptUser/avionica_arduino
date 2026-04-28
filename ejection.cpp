@@ -53,7 +53,7 @@ namespace Ejection {
   // ------------------------------------------------------------
   void setup(){
 
-    #if mode == pyro
+    #if mode == PYRO
 
       // Configura PB1 (D9) como saída
       DDRB |= (1 << 1);
@@ -62,7 +62,8 @@ namespace Ejection {
       // (Nota: operação correta seria limpar o bit)
       PORTB &= ~(1 << 1);
 
-    #else
+      Serial.println("[Ejection] Sistema de ejeção iniciado no modo PYRO")
+    #if mode == SERVO
 
       // Inicializa o servo no pino definido
       ejectionServo.attach(SERVO_OUT_PIN);
@@ -70,6 +71,10 @@ namespace Ejection {
       // Define posição inicial (0 graus)
       ejectionServo.write(0);
 
+      // Imprime no serial caso funcione
+      Serial.println("[Ejection] Sistema de ejeção iniciado no modo SERVO ");
+    #else
+      Serial.println("[Ejection] Falha de definição de modo")
     #endif
   }
 
@@ -83,7 +88,6 @@ namespace Ejection {
   bool ejectionEvent() {
 
     #if mode == pyro
-
         // ----------------------------------------------------
         // Lógica pirotécnica:
         //   - 3 pulsos
@@ -125,11 +129,9 @@ namespace Ejection {
 
             return false; // Sequência ainda em execução
         }
-
         return true; // Todos os pulsos concluídos
 
-    #else
-
+    #if mode == SERVO
         // ----------------------------------------------------
         // Lógica com servo:
         //   Movimento: 0° ↔ 90°
@@ -165,9 +167,7 @@ namespace Ejection {
 
             return false; // Ainda em execução
         }
-
         return true; // Sequência finalizada
-
     #endif
   }
 

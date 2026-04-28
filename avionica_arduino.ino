@@ -35,6 +35,7 @@
 #include "storage.hpp"
 #include "telemetry.hpp"
 #include "statemachine.hpp"
+#include "ejection.cpp"
 #include <avr/interrupt.h>
 
 // =============================================================
@@ -148,6 +149,10 @@ void setup() {
         while (true);
     }
 
+    // Inicializando sistema de ejeção com configuração escolhida
+    Ejection::setup();
+    
+    // Inicializando maquina de estados finitos
     StateMachine::setup();
 
     // Apaga a flash antes do voo
