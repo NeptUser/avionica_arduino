@@ -30,6 +30,11 @@
 // =============================================================
 //#define mode PYRO             // DEFINE MODO PYRO
 #define mode SERVO              // DEFINE MODO SERVO
+#define FLASH_CS_PIN        10  // W25Q128: Chip Select (SPI)
+
+// LoRa
+#define LORA_RX_PIN          5  // LoRa E32: RX do Arduino
+#define LORA_TX_PIN          6  // LoRa E32: TX do Arduino
 
 // =============================================================
 // THRESHOLDS DA MÁQUINA DE ESTADOS
@@ -84,10 +89,9 @@ struct DadosVoo {
     float pressao;      // hPa
     float temperatura;  // °C
     float altitude;     // metros
-    unsigned long timestampBMP;  // ms desde o boot (millis())
 
     // Contexto da missão
-
+    unsigned long timestamp;  // ms desde o boot (millis())
     EstadoVoo estado;         // fase atual do voo
 };
 
@@ -100,8 +104,9 @@ struct DadosVoo {
 // =============================================================
 struct PacoteTelemetria {
     float acelX, acelY, acelZ;  // aceleração (m/s²)
+    float giroX, giroY, giroZ;
+
     float altitude;             // altitude (metros)
-    float pressao;              // pressão (hPa)
     unsigned long timestamp;    // ms desde o boot
     EstadoVoo estado;           // fase atual do voo
 };
