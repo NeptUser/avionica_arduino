@@ -4,7 +4,7 @@
 // Ausência de ISR para recepção:
 //   Nessa aplicação o Arduino opera exclusivamente como
 //   transmissor de telemetria. O pino AUX do E32 é monitorado
-//   por polling direto no registrador PIND — custo de 3 clocks
+//   por polling direto no registrador PINB — custo de 3 clocks
 //   por iteração, negligenciável quando o módulo está livre.
 //   A decisão de não usar ISR no AUX preserva INT0 (D2) para
 //   o MPU-6050, onde a aquisição determinística tem prioridade.
@@ -12,16 +12,18 @@
 // Registradores utilizados:
 //
 //   DDRD  → Data Direction Register porto D.
-//           1 = saída, 0 = entrada.
-//           D6 (M0) e D7 (M1) → saída (controlamos o E32)
-//           D5 (AUX) → entrada (lemos o status do E32)
+//           D4 (M0) e D7 (M1) → saída
+//
+//   DDRB  → Data Direction Register porto B.
+//           D8 (AUX) → entrada
 //
 //   PORTD → Escrita nos pinos de saída do porto D.
 //           Usado para setar M0=0, M1=0 (modo normal).
-//           Pull-up interno no AUX via PORTD bit 5.
 //
-//   PIND  → Leitura do estado atual dos pinos do porto D.
-//           PIND & (1 << 5): lê AUX (D5).
+//   PORTB → Pull-up interno no AUX via bit 0.
+//
+//   PINB  → Leitura do estado atual dos pinos do porto B.
+//           PINB & (1 << 0): lê AUX (D8).
 //           3 clocks por leitura (IN + ANDI + BREQ).
 
 #include "telemetry.hpp"
@@ -44,26 +46,23 @@ namespace Telemetry {
 
         // --- Configuração de pinos via registradores ---
 
-        // DDRD: M0 (D6) e M1 (D7) como saída
-        DDRD |=  (1 << 6);  // M0 → saída
+        // DDRD: M0 (D4) e M1 (D7) como saída
+        DDRD |=  (1 << 4);  // M0 → saída
         DDRD |=  (1 << 7);  // M1 → saída
 
-        // DDRD: AUX (D5) como entrada
-        DDRD &= ~(1 << 5);  // AUX → entrada
+        // DDRB: AUX (D8) como entrada
+        DDRB &= ~(1 << 0);  // AUX → entrada
 
-        // PORTD: habilita pull-up interno no AUX (D5)
-        // Evita leitura flutuante quando o E32 não está
-        // puxando o pino ativamente
-        PORTD |= (1 << 5);
+        // PORTB: habilita pull-up interno no AUX (D8)
+        PORTB |= (1 << 0);
 
         // PORTD: M0=0, M1=0 → modo normal de operação
-        PORTD &= ~(1 << 6); // M0 = 0
+        PORTD &= ~(1 << 4); // M0 = 0
         PORTD &= ~(1 << 7); // M1 = 0
 
         // Aguarda AUX HIGH via polling — módulo pronto
-        // Custo: 3 clocks × número de iterações até HIGH
         unsigned long inicio = millis();
-        while (!(PIND & (1 << 5))) {
+        while (!(PINB & (1 << 0))) {
             if (millis() - inicio > 1000) {
                 Serial.println("[TELEMETRY] Timeout: modulo nao respondeu.");
                 return false;
@@ -76,12 +75,8 @@ namespace Telemetry {
 
     void sendPacket() {
         // --- Polling do AUX antes de transmitir ---
-        // PIND & (1 << 5): lê o bit 5 do porto D (AUX = D5)
-        // Custo por iteração: 3 clocks (IN + ANDI + BREQ)
-        // Se AUX já está HIGH: sai imediatamente (custo ~3 clocks)
-        // Se AUX está LOW: itera até HIGH ou timeout
         unsigned long inicio = millis();
-        while (!(PIND & (1 << 5))) {
+        while (!(PINB & (1 << 0))) {
             if (millis() - inicio > 1000) {
                 Serial.println("[TELEMETRY] Timeout no envio.");
                 return;

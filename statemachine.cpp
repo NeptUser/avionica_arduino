@@ -8,6 +8,7 @@
 #include "statemachine.hpp"
 #include "globals.hpp"
 #include <math.h>
+#include "ejection.hpp"
 
 // ------------------------------------------------------------
 // Altitude máxima registrada durante o voo.
@@ -67,6 +68,7 @@ namespace StateMachine {
                 if (dadosVoo.altitude < altitudeMaxima - MARGEM_APOGEU) {
                     dadosVoo.estado = EstadoVoo::QUEDA;
                     Serial.println("[STATE] BAIXA_ENERGIA → QUEDA");
+                    if(Ejection::ejectionEvent()) Serial.println("[EVENT] PARAQUEDAS ACIONADO");
                 }
                 break;
 
