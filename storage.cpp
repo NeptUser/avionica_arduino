@@ -102,7 +102,7 @@ namespace Storage {
         // Cabeçalho CSV — adequado para importar direto em
         // Excel, LibreOffice Calc ou pandas (Python)
         Serial.println(
-            "indice,timestamp,estado,"
+            "indice,timeStamp,estado,"
             "acelX,acelY,acelZ,"
             "giroX,giroY,giroZ,"
             "pressao,temperatura,altitude"

@@ -53,7 +53,7 @@ namespace Sensor {
         return true;
     }
 
-    void readMPU() {
+    void readData() {
         // --- Leitura do MPU-6050 ---
         // A biblioteca retorna os dados em eventos tipados
         sensors_event_t accel, gyro, temp;
@@ -67,23 +67,13 @@ namespace Sensor {
         dadosVoo.giroX = gyro.gyro.x;
         dadosVoo.giroY = gyro.gyro.y;
         dadosVoo.giroZ = gyro.gyro.z;
-        
-        dadosVoo.timestamp = millis();
-    }
 
-    void readBMP(){
         // --- Leitura do BMP280 ---
         dadosVoo.pressao     = bmp.readPressure() / 100.0F; // Pa → hPa
         dadosVoo.temperatura = bmp.readTemperature();
         dadosVoo.altitude    = bmp.readAltitude(PRESSAO_NIVEL_MAR);   // pressão ao nível do mar padrão
 
         // --- Timestamp ---
-        dadosVoo.timestamp = millis();
-    }
-
-    void readData() {
-        readMPU();
-        readBMP();
         dadosVoo.timestamp = millis();
     }
 
