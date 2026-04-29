@@ -23,8 +23,8 @@ static SPIFlash flash(FLASH_CS_PIN);
 // ------------------------------------------------------------
 static uint32_t contadorRegistros = 0;
 
-// Buffer interno (10 amostras)
-#define BUFFER_SIZE 10
+// Buffer interno (3 amostras) - reduzido ainda mais para economizar RAM
+#define BUFFER_SIZE 3
 static DadosVoo buffer[BUFFER_SIZE];
 static uint8_t bufferIndex = 0;
 
@@ -58,6 +58,10 @@ namespace Storage {
         if (bufferIndex >= BUFFER_SIZE) {
             flush();
         }
+    }
+
+    void saveData() {
+        push(dadosVoo);
     }
 
     void flush() {
@@ -98,7 +102,7 @@ namespace Storage {
         // Cabeçalho CSV — adequado para importar direto em
         // Excel, LibreOffice Calc ou pandas (Python)
         Serial.println(
-            "indice,tMPU,tBMP,estado,"
+            "indice,timestamp,estado,"
             "acelX,acelY,acelZ,"
             "giroX,giroY,giroZ,"
             "pressao,temperatura,altitude"
@@ -117,8 +121,7 @@ namespace Storage {
 
             // Imprime uma linha CSV por registro
             Serial.print(i);                          Serial.print(",");
-            Serial.print(temp.timestampMPU);          Serial.print(",");
-            Serial.print(temp.timestampBMP);          Serial.print(",");
+            Serial.print(temp.timestamp);             Serial.print(",");
             Serial.print((uint8_t)temp.estado);       Serial.print(",");
             Serial.print(temp.acelX, 4);              Serial.print(",");
             Serial.print(temp.acelY, 4);              Serial.print(",");

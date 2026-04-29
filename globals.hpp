@@ -22,6 +22,10 @@
 #define SERVO_OUT_PIN 3         // Servo-motor: Saída de sinal
 #define PYRO_OUTPUT 9           // Canal Pyro: Controle de mosfet
 
+#define EJECTION_MODE_PYRO   0
+#define EJECTION_MODE_SERVO  1
+#define EJECTION_MODE        EJECTION_MODE_SERVO
+
 // =============================================================
 // CONFIGURAÇÕES DE EJEÇÃO DO PARAQUEDAS
 // Definir qual tipo de atuação de ejeção será escolhida (Servo
@@ -29,7 +33,7 @@
 // A escolha do modo é realizada apenas por software
 // =============================================================
 //#define mode PYRO             // DEFINE MODO PYRO
-#define mode SERVO              // DEFINE MODO SERVO
+//#define mode SERVO             // DEFINE MODO SERVO
 
 // =============================================================
 // THRESHOLDS DA MÁQUINA DE ESTADOS
@@ -56,6 +60,10 @@
 // aterrissou. Relativa à altitude do BMP280 na inicialização.
 #define THRESHOLD_SOLO          5.0f    // metros
 
+// Pressão atmosférica padrão ao nível do mar (hPa)
+// Usada como referência para cálculo de altitude pelo BMP280.
+#define PRESSAO_NIVEL_MAR       1013.25f
+
 // =============================================================
 // ESTADOS DE VOO
 // Representa a fase atual da missão.
@@ -78,16 +86,14 @@ struct DadosVoo {
     // MPU-6050: aceleração linear (m/s²) e angular (°/s)
     float acelX, acelY, acelZ;
     float giroX, giroY, giroZ;
-    unsigned long timestampMPU;  // ms desde o boot (millis())
+    unsigned long timestamp;     // ms desde o boot (millis())
 
     // BMP280: condições atmosféricas e altitude
     float pressao;      // hPa
     float temperatura;  // °C
     float altitude;     // metros
-    unsigned long timestampBMP;  // ms desde o boot (millis())
 
     // Contexto da missão
-
     EstadoVoo estado;         // fase atual do voo
 };
 
